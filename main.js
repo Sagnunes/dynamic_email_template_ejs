@@ -24,7 +24,8 @@ const transporter = nodemailer.createTransport({
 });
 
 async function getTickets() {
-    let actualDate = moment().format('YYYY-MM-DD');
+    // let actualDate = moment().format('YYYY-MM-DD');
+    let actualDate = '2024-10-14'
     try {
         await connection.connect();
         const [rows] = await connection.promise().query(`SELECT * FROM view_closed_tickets WHERE closed BETWEEN '${actualDate} 00:00:00' AND '${actualDate} 23:59:59'`);
@@ -48,8 +49,8 @@ async function sendEmails(records) {
                 } else {
                     const mailOptions = {
                         from: process.env.MAIL_DEPARTMENT,
-                        to: 'sergio.ag.nunes@madeira.gov.pt',
-                        subject: 'Inquérito de satisfação do ' + ticket.subject,
+                        to: 'corina.lf.gomes@madeira.gov.pt',
+                        subject: 'Inquérito de satisfação do Ticket #' + ticket.ticket_number,
                         html: template,
                         attachments: [{
                             filename: 'Logo_SRETC_DRABL_Branco.png',
@@ -59,7 +60,7 @@ async function sendEmails(records) {
                     };
 
                     try {
-                        //await transporter.sendMail(mailOptions);
+                        await transporter.sendMail(mailOptions);
                         console.log('Email enviado com sucesso.');
                     } catch (error) {
                         console.error('Erro ao enviar o email:', error);
