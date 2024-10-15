@@ -24,51 +24,60 @@ const transporter = nodemailer.createTransport({
 });
 
 async function getTickets() {
+    let actualDate = moment().format('YYYY-MM-DD');
     try {
-
         await connection.connect();
-        const [rows] = await connection.promise().query(`SELECT * FROM view_closed_tickets WHERE closed BETWEEN '2024-10-14 00:00:00' AND '2024-10-14 23:59:59'`);
+        const [rows] = await connection.promise().query(`SELECT * FROM view_closed_tickets WHERE closed BETWEEN '${actualDate} 00:00:00' AND '${actualDate} 23:59:59'`);
         return rows
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 }
 
 async function sendEmails(records) {
 
-    for (const ticket of records) {
+    if (!records) {
+        console.log('no records')
+    } else {
+        for (const ticket of records) {
 
-        ticket.createdAt = moment(ticket.created).format('DD-MM-YYYY')
-        ejs.renderFile(__dirname + '/src/views/emails.ejs', {ticket}, async function (err, template) {
-            if (err) {
-                console.log(err);
-            } else {
-                const mailOptions = {
-                    from: process.env.MAIL_DEPARTMENT,
-                    to: ticket.address,
-                    subject: 'Inquérito de satisfação do ' + ticket.subject,
-                    html: template,
-                    attachments: [{
-                        filename: 'Logo_SRETC_DRABL_Branco.png',
-                        path: __dirname + '/src/assets/Logo_SRETC_DRABL_Branco.png',
-                        cid: 'logo'
-                    }]
-                };
+            ticket.createdAt = moment(ticket.created).format('DD-MM-YYYY')
+            ejs.renderFile(__dirname + '/src/views/emails.ejs', {ticket}, async function (err, template) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    const mailOptions = {
+                        from: process.env.MAIL_DEPARTMENT,
+                        to: 'sergio.ag.nunes@madeira.gov.pt',
+                        subject: 'Inquérito de satisfação do ' + ticket.subject,
+                        html: template,
+                        attachments: [{
+                            filename: 'Logo_SRETC_DRABL_Branco.png',
+                            path: __dirname + '/src/assets/Logo_SRETC_DRABL_Branco.png',
+                            cid: 'logo'
+                        }]
+                    };
 
-                try {
-                    await transporter.sendMail(mailOptions);
-                    console.log('Email enviado com sucesso.');
-                } catch (error) {
-                    console.error('Erro ao enviar o email:', error);
+                    try {
+                        //await transporter.sendMail(mailOptions);
+                        console.log('Email enviado com sucesso.');
+                    } catch (error) {
+                        console.error('Erro ao enviar o email:', error);
+                    }
                 }
-            }
-        })
+            })
+        }
     }
+
 }
 
 async function main() {
     let records = await getTickets();
     await sendEmails(records);
+
+    setTimeout(() => {
+        process.exit(0);
+    }, 5 * 60 * 1000)
 }
 
 main();
