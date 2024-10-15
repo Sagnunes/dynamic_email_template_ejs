@@ -6,15 +6,16 @@
     <link href="../assets/output.css" rel="stylesheet">
     <title>Emails</title>
 </head>
-<body class="bg-black bg-opacity-20">
-<header class="bg-pantone-300 h-44 ">
+<body style="background-color:rgba(0, 0, 0, 0.2)">
+<header style="background-color: #0062a6; height: 208px; display: flex; justify-content: center; padding-top: 20px;">
+    <img src="../assets/Logo_SRETC_DRABL_Branco.png" alt="drabl logo" style="height: 70px">
 </header>
 <main class="flex justify-center mx-auto relative">
     <div class="flex flex-col bg-white w-[1000px] absolute -top-20 p-10">
         <h1 class="text-5xl text-center">Inquérito de satisfação</h1>
-        <h2 class="mt-10">Caro(a) <span class="font-bold"><%= name %></span>,</h2>
+        <h2 class="mt-10">Caro(a) <span class="font-bold">Andy Christopher Aguiar da Costa</span>,</h2>
 
-        <h3 class="mt-5">Vimos informá-lo que o seu pedido: <%= subject %></h3>
+        <h3 class="mt-5">Vimos informá-lo que o seu pedido com a descrição:</h3>
 
         <p>foi concluído, pelo que solicitamos o preenchimento de um inquérito para podermos avaliar o seu grau de
             satisfação com o serviço prestado.</p>
@@ -28,12 +29,15 @@
         <p class="mt-2">A equipa de assistência técnica.</p>
 
         <div class="mt-10 text-xs text-pantone-300">
-            <span class="font-bold">Direção Regional dos Arquivos, das Bibliotecas e do Livro</span> <br>
-            Caminho dos Álamos 35, <br>
-            9020-064 Funchal - Madeira <br>
-            Tel.: +351 291 145 310 <br>
-            <span class="text-xs mt-2">sti.drabl@madeira.gov.pt</span> <br>
-            <span class="text-xs">www.abm.madeira.gov.pt</span>
+            <div><span class="font-bold">Direção Regional dos Arquivos, <br>das Bibliotecas e do Livro</span> <br>
+                Caminho dos Álamos 35, <br>
+                9020-064 Funchal - Madeira <br>
+                Tel.: +351 291 145 310 <br>
+            </div>
+            <div class="mt-2 flex flex-col space-y-3">
+                <p class="text-xs">sti.drabl@madeira.gov.pt</p>
+                <p class="text-xs">www.abm.madeira.gov.pt</p>
+            </div>
         </div>
     </div>
 </main>
