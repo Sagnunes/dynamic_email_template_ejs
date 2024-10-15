@@ -1,6 +1,7 @@
 require('dotenv').config()
 const database = require('mysql2');
 const ejs = require('ejs');
+const moment = require('moment');
 
 const connection = database.createConnection({
     host: process.env.DB_HOST,
@@ -15,7 +16,7 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
     port: process.env.MAIL_PORT,
-    secure: 'null',
+    secure: false,
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASSWORD,
@@ -35,18 +36,23 @@ async function getTickets() {
 
 async function sendEmails(records) {
 
-    ejs.renderFile(__dirname + '/src/views/emails.ejs', {records: records}, async function (err, template) {
-        if (err) {
-            console.log(err);
-        } else {
-            for (const ticket of records) {
+    for (const ticket of records) {
 
-                console.log(ticket)
+        ticket.createdAt = moment(ticket.created).format('DD-MM-YYYY')
+        ejs.renderFile(__dirname + '/src/views/emails.ejs', {ticket}, async function (err, template) {
+            if (err) {
+                console.log(err);
+            } else {
                 const mailOptions = {
                     from: process.env.MAIL_DEPARTMENT,
-                    to: 'sergio.ag.nunes@madeira.gov.pt',
-                    subject: ticket.subject,
-                    html: template
+                    to: ticket.address,
+                    subject: 'Inquérito de satisfação do ' + ticket.subject,
+                    html: template,
+                    attachments: [{
+                        filename: 'Logo_SRETC_DRABL_Branco.png',
+                        path: __dirname + '/src/assets/Logo_SRETC_DRABL_Branco.png',
+                        cid: 'logo'
+                    }]
                 };
 
                 try {
@@ -56,8 +62,8 @@ async function sendEmails(records) {
                     console.error('Erro ao enviar o email:', error);
                 }
             }
-        }
-    })
+        })
+    }
 }
 
 async function main() {
